@@ -11,6 +11,7 @@ Web page cleaner.
 import sys
 import re
 import urllib
+import chardet
 import codecs
 import datetime
 import logging
@@ -19,7 +20,7 @@ import os
 logging.basicConfig(filename="web_cleaner.log", filemode="w", level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 patternBRtoNL = re.compile('\s*<br>\s*', re.M|re.DOTALL|re.I|re.U)
-patternPtoNL = re.compile('\s*<p[^>]*>\s*(.+?)</p>', re.M|re.DOTALL|re.I|re.U)
+patternPtoNL = re.compile('\s*</p>\s*', re.M|re.DOTALL|re.I|re.U)
 patternExtraNl = re.compile('\n{2,}', re.M|re.DOTALL|re.I|re.U)
 patternNbspToSpace = re.compile('\s*&nbsp;\s*', re.M|re.DOTALL|re.I|re.U)
 patternAmpNbspToSpace = re.compile('\s*&amp;nbsp;\s*', re.M|re.DOTALL|re.I|re.U)
@@ -76,6 +77,9 @@ def downloadPage(url):
 	while trys > 0 and not downloaded:
 		try:
 			page = urllib.urlopen(url).read()
+			#enc = chardet.detect(page)
+			#page = page.decode(enc["encoding"])
+			page = unicode(page, "utf-8")
 			downloaded = True
 		except:
 			logging.error("Download of " + url + " has failed!")
@@ -130,6 +134,10 @@ def webCleaner():
 			(page, downloaded) = downloadPage(url)
 			if downloaded:
 				(content, title, extras) = cleanPage(page)
+				#content = unicode(content, "utf-8")
+				#title = unicode(title, "utf-8")
+				#extras = unicode(extras, "utf-8")
+				logging.info("Page: " + str(url) + " cleaned!")
 				writePage(content, title, url, extras)
 		except Exception as e:
 			logging.error("Failed to process url " + str(url) + ". Exception: " + str(e))
