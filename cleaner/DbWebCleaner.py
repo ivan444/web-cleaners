@@ -6,6 +6,8 @@ Web page cleaner.
 
 @author: Ivan Krišto
 
+TODO:
+  - multithreaded download.
 '''
 
 import sys
@@ -41,19 +43,30 @@ createdb = False
 # Database
 db = None
 
+def sstr(s):
+	"""ASCII safe str()"""
+	safes = []
+	for c in s:
+		if ord(c) < 128: safes.append(c)
+		else: safes.append(c)
+	return "".join([c for c in safes])
+
 def produceNewlines(text):
+	"""Convert BR and P elements to newline char."""
 	if text == None: return ""
 	text = patternBRtoNL.sub("\n", text)
 	text = patternPtoNL.sub("\n", text)
 	return patternExtraNl.sub("\n", text)
 
 def nbspToSpace(text):
+	"""Convert &nbsp; entity to whitespace char."""
 	if text == None: return ""
 	text = patternNbspToSpace.sub(" ", text)
 	text = patternAmpNbspToSpace.sub(" ", text)
 	return text
 
 def removeTags(text):
+	"""Remove HTML tags from text."""
 	if text == None: return ""
 	text = patternFindScript.sub(" ", text)
 	return patternFindTag.sub(" ", text)
@@ -81,18 +94,22 @@ def xmlEscape(text):
 	return "".join(L)
 
 def downloadPage(url):
+	"""Page downloader.
+	Returns web page content (html) and
+	True/False flag indicating is page succesfully downloaded."""
+
 	trys = 3
 	downloaded = False
-	logging.info("Download: " + url + ".")
+	logging.info("Download: " + sstr(url) + ".")
+	page = None
 	while trys > 0 and not downloaded:
 		try:
 			page = urllib.urlopen(url).read()
 			#enc = chardet.detect(page)
 			#page = page.decode(enc["encoding"])
-			page = unicode(page, "utf-8")
 			downloaded = True
-		except:
-			logging.error("Download of " + url + " has failed!")
+		except Exception as e:
+			logging.error("Download of " + sstr(url) + " has failed! Exception: " + str(e))
 			downloaded = False
 			trys-=1
 			if trys == 0: db.execCm("insert into fails values (?,?)", (url, datetime.datetime.now()))
@@ -110,10 +127,17 @@ def commonCleaner(content):
  
 
 def writePage(content, title, url, extras):
+	"""Write processed web page data into database."""
 	db.insertArticle(content, title, url, extras, "hr")
 	
 
 def webCleaner():
+	"""Master part of script.
+	Initiates crawling for article URLs,
+	downloads article,
+	cleans it and
+	writes it to database."""
+
 	global urlsNum
 	urls = crawlUrls()
 	
@@ -143,15 +167,17 @@ def webCleaner():
 				#content = unicode(content, "utf-8")
 				#title = unicode(title, "utf-8")
 				#extras = unicode(extras, "utf-8")
-				logging.info("Page: " + str(url) + " cleaned!")
+				logging.info("Page: " + sstr(url) + " cleaned!")
 				writePage(content, title, url, extras)
 		except Exception as e:
-			logging.error("Failed to process url " + str(url) + ". Exception: " + str(e))
+			logging.error("Failed to process url " + sstr(url) + ". Exception: " + str(e))
 			db.execCm("insert into fails values (?,?)", (url, datetime.datetime.now()))
 
 		logging.info(u"Processed (" + str(curId) + "/" + str(urlsNum) + ") pages - " + ("%2.2f" % ((curId)*100.0/urlsNum)) + "%")
 
 def dbToXml():
+	"""Transfer database data to XML file."""
+
 	curId = 0
 	while True:
 		db.execute("""select
@@ -206,6 +232,8 @@ Optional:
 """
 
 def processOptions():
+	"""Process command line arguments."""
+
 	global siteName, dbpath, output, impl, createdb
 	setSite = False
 	setImpl = False
@@ -253,6 +281,8 @@ def processOptions():
 	
 
 def initDb(dbpath, createdb):
+	"""Initialize database and create tables if needed."""
+
 	global db
 	db = dbwriter.Db(dbpath)
 

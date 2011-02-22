@@ -13,9 +13,6 @@ Wrapper za arhivu hrportfolio.com sitea.
 import sys
 import re
 import urllib
-import logging
-
-logging.basicConfig(filename="hrportfolio_cleaner.log", filemode="w", level=logging.DEBUG)
 
 def crawlUrls():
 	articleUrls = []

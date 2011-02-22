@@ -87,6 +87,7 @@ def getSoup(page, encoding):
 
 def cleanPage(page):
 	#page = page.decode("utf_8")
+	page = unicode(page, "utf-8")
 	
 	logging.debug("Cleaning!")
 	#soup = getSoup(page, "utf-8")
