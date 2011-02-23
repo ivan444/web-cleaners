@@ -207,7 +207,10 @@ def dbToXml():
 			#extras = json.loads(r["e"])
 			extras = eval(r[4])
 			for tag, val in extras.items():
-				print >>cleaningOut, u'\t\t\t<'+tag+'>'+commonCleaner(val)+'</'+tag+'>'
+				try:
+					print >>cleaningOut, u'\t\t\t<'+tag+'>'+commonCleaner(val)+'</'+tag+'>'
+				except Exception as e:
+					logging.error("Failed to write tag " + tag + "! Exception: " + str(e))
 			print >>cleaningOut, u'\t\t</extraInfo>\n'
 			
 			print >>cleaningOut, u'\t</doc>\n'

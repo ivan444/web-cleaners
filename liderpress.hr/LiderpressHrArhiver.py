@@ -13,16 +13,13 @@ Wrapper za arhivu liderpress.hr sitea.
 import sys
 import re
 import urllib
-#import logging
 from BeautifulSoup import BeautifulSoup
 from BeautifulSoup import BeautifulStoneSoup
 
-#logging.basicConfig(filename="liderpress_cleaner.log", filemode="w", level=logging.DEBUG)
-
-execfile("/home/ivan444/d/eclipse-workspace/WebPageCleaning/liderpress.hr/links.py")
+#execfile("/home/ivan444/d/eclipse-workspace/WebPageCleaning/liderpress.hr/links.py")
 
 def crawlUrls():
-	if True: return crawled
+	#if True: return crawled
 
 	articleUrls = []
 	baseUrl = "http://www.liderpress.hr/Default.aspx?sid="
