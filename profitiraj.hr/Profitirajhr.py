@@ -57,15 +57,15 @@ def cleanPage(page):
 
 	# Body
 	body = bodyP.findall(page)[0]
+	body = unicode(body, "utf-8")
 	body.replace("</div>", "")
 	bodyParafs = removeInner.findall(body)
 	body = "".join(["%s" % k for k in bodyParafs])
 
-	body = unicode(body, "utf-8")
-
 	# Title
 	resultTitle = soup.find('div', {"id":"full"}).findAll(name='h2', recursive=False)
 	title = "".join(["%s" % k for k in resultTitle])
+	title = unicode(title, "utf-8")
 
 	# Extras
 	extras = {}

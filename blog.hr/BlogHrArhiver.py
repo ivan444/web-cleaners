@@ -16,7 +16,7 @@ import urllib
 import codecs
 import datetime
 
-# Lista svih blogova. Ovdje dolazi blog s oznakom mjeseca (može biti bilo koji mjesec)!
+# Lista svih blogova. Ovdje dolazi blog s oznakom mjeseca (moze biti bilo koji mjesec)!
 arhiveLinks = []
 arhiveLinks.append("http://barba.blog.hr/2010/03/index.html")
 arhiveLinks.append("http://astrodrom.blog.hr/2010/03/index.html")
@@ -133,7 +133,7 @@ def extractTextLinks():
 		
 		(page, downloaded) = downloadPage(l)
 		if "<title>Blog.hr - HTTP 404 Not Found</title>" in page:
-			logWarning(u"URL " + l + " ne sadrži blog!")
+			logWarning(u"URL " + l + " ne sadrzi blog!")
 			continue
 		
 		if downloaded:
@@ -203,7 +203,6 @@ def cleanContent(page):
 def wrapClean(text):
 	return bigReplace(nbspToSpace(text))
 
-# TODO: This
 def cleanPage(url):
 	try:
 		(page, downloaded) = downloadPage(url)
@@ -211,7 +210,7 @@ def cleanPage(url):
 
 		cleaned = {}
 		if downloaded:
-			log(u"Obrađujem: " + url)
+			log(u"Obradjujem: " + url)
 			title = extractTitlePattern.search(page).group(1)
 			date = extractDatePattern.search(page).group(1)
 			author = extractAuthorPattern.search(page).group(1)
@@ -256,7 +255,7 @@ def downloader():
 		
 		print >>cleaningOut, u'\t</doc>\n'
 		
-		log(u"Obrađeno (" + str(id-1) + "/" + str(linksLen) + ") stranica - " + ("%2.2f" % ((id-1)*100.0/linksLen)) + "%")
+		log(u"Obradjeno (" + str(id-1) + "/" + str(linksLen) + ") stranica - " + ("%2.2f" % ((id-1)*100.0/linksLen)) + "%")
 						
 if __name__ == '__main__':
 	
